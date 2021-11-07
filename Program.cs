@@ -5,9 +5,7 @@ using Microsoft.CodeAnalysis.Emit;
 using System.Diagnostics;
 using System.Reflection;
 
-//// See https://aka.ms/new-console-template for more information
-//var summary = BenchmarkRunner.Run<Md5VsSha256>();
-//Debug.WriteLine(summary);
+// See https://aka.ms/new-console-template for more information
 
 var compilationBuilder = new CompilationBuilder();
 var compilation = compilationBuilder.CreateCompilation();
