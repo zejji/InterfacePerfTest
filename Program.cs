@@ -45,21 +45,5 @@ if (assembly == null)
 
 Type? type = assembly.GetType("HelloWorld.HelloWorld");
 
-if (type == null)
-{
-    throw new InvalidOperationException($"{nameof(type)} is null.");
-}
-
-object? obj = Activator.CreateInstance(type);
-
-if (obj == null)
-{
-    throw new InvalidOperationException($"{nameof(obj)} is null.");
-}
-
-type.InvokeMember("SayHello",
-    BindingFlags.Default | BindingFlags.InvokeMethod,
-    null,
-    obj,
-    null//new object[] { "Hello World" }
-    );
+var summary = BenchmarkRunner.Run(type);
+Debug.WriteLine(summary);
