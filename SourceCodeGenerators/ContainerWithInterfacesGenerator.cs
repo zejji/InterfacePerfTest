@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace InterfacePerfTest.SourceCodeGenerators
+﻿namespace InterfacePerfTest.SourceCodeGenerators
 {
     internal class ContainerWithInterfacesGenerator : IContainerGenerator
     {
@@ -14,7 +8,7 @@ namespace InterfacePerfTest.SourceCodeGenerators
         {
             _methodCount = methodCount;
         }
-        
+
         public string GetContainerSourceText()
         {
             return @"
@@ -35,7 +29,19 @@ namespace MyCode
 
         public string GetCallingCodeSourceText()
         {
-            return "";
+            return @"
+namespace MyCode
+{
+    public static class Caller2
+    {
+        public static void Run() 
+        {
+            var testObject = new HelloWorld2();
+            testObject.SayHello2();
+        }
+    }
+}
+";
         }
     }
 }

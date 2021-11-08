@@ -6,14 +6,14 @@ using System.Reflection;
 
 namespace InterfacePerfTest
 {
-    internal class CompilationBuilder
+    internal static class CompilationBuilder
     {
-        public Compilation CreateCompilation(IEnumerable<string> sourceTexts)
+        public static Compilation CreateCompilation(IEnumerable<string> sourceTexts)
         {
             var syntaxTrees = sourceTexts
                 .Select(source => CSharpSyntaxTree.ParseText(source))
                 .ToArray();
-            
+
             var coreLibReference        = MetadataReference.CreateFromFile(typeof(Binder).GetTypeInfo().Assembly.Location);
             var netstandardReference    = MetadataReference.CreateFromFile(Assembly.Load("netstandard, Version=2.0.0.0").Location);
             var runtimeReference        = MetadataReference.CreateFromFile(Assembly.Load("System.Runtime, Version=6.0.0.0").Location);
