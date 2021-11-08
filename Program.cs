@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Running;
 using InterfacePerfTest;
+using InterfacePerfTest.SourceCodeGenerators;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Emit;
 using System.Diagnostics;
@@ -8,7 +9,43 @@ using System.Reflection;
 // See https://aka.ms/new-console-template for more information
 
 var compilationBuilder = new CompilationBuilder();
-var compilation = compilationBuilder.CreateCompilation();
+
+List<string> sourceCodeFiles = new();
+
+const long methodCount = 1;
+var generator1 = new ContainerGenerator(methodCount);
+var generator2 = new ContainerWithInterfacesGenerator(methodCount);
+
+sourceCodeFiles.Add(generator1.GetContainerSourceText());
+sourceCodeFiles.Add(generator2.GetContainerSourceText());
+
+sourceCodeFiles.Add(@"
+using BenchmarkDotNet.Attributes;
+using MyCode;
+
+namespace MyBenchMarks
+{
+    [InProcess]
+    public class BenchmarkClass
+    {
+        [Benchmark]
+        public void CallSayHello() 
+        {
+            var testObject = new HelloWorld();
+            testObject.SayHello();
+        }
+
+        [Benchmark]
+        public void CallSayHello2() 
+        {
+            var testObject = new HelloWorld2();
+            testObject.SayHello2();
+        }
+    }
+}
+");
+
+var compilation = compilationBuilder.CreateCompilation(sourceCodeFiles);
 
 Assembly? assembly = null;
 
@@ -41,7 +78,7 @@ if (assembly == null)
     throw new InvalidOperationException($"{nameof(assembly)} is null.");
 }
 
-Type? type = assembly.GetType("HelloWorld.HelloWorld");
+Type? type = assembly.GetType("MyBenchMarks.BenchmarkClass");
 
 var summary = BenchmarkRunner.Run(type);
 Debug.WriteLine(summary);

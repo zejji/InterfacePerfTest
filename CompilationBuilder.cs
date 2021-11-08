@@ -8,9 +8,11 @@ namespace InterfacePerfTest
 {
     internal class CompilationBuilder
     {
-        public Compilation CreateCompilation()
+        public Compilation CreateCompilation(IEnumerable<string> sourceTexts)
         {
-            var source = _createTestSource();
+            var syntaxTrees = sourceTexts
+                .Select(source => CSharpSyntaxTree.ParseText(source))
+                .ToArray();
             
             var coreLibReference        = MetadataReference.CreateFromFile(typeof(Binder).GetTypeInfo().Assembly.Location);
             var netstandardReference    = MetadataReference.CreateFromFile(Assembly.Load("netstandard, Version=2.0.0.0").Location);
@@ -32,7 +34,7 @@ namespace InterfacePerfTest
 
             var compilation = CSharpCompilation.Create(
                 assemblyName:   "compilation",
-                syntaxTrees:    new[] { CSharpSyntaxTree.ParseText(source) },
+                syntaxTrees:    syntaxTrees,
                 references:     additionalReferences,
                 options:        new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
                                     .WithOptimizationLevel(optimizationLevel));
@@ -47,27 +49,6 @@ namespace InterfacePerfTest
             if (failures.Any()) throw new Exception("One or more errors occurred during compilation.");
 
             return compilation;
-        }
-
-        private static string _createTestSource()
-        {
-            return @"
-using BenchmarkDotNet.Attributes;
-using System;
-
-namespace HelloWorld
-{
-    [InProcess]
-    public class HelloWorld
-    {
-        [Benchmark]
-        public void SayHello() 
-        {
-            Console.WriteLine(""Hello from generated code!"");
-        }
-    }
-}
-";
         }
     }
 }
