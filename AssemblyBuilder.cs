@@ -1,4 +1,4 @@
-﻿using InterfacePerfTest.SourceCodeGenerators;
+﻿using InterfacePerfTest.SourceCodeBuilders;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Emit;
 using System.Reflection;
@@ -9,8 +9,8 @@ namespace InterfacePerfTest
     {
         public static Assembly GetBenchmarkAssembly()
         {
-            List<IContainerGenerator> generators = _getGenerators();
-            List<string> sourceCodeFiles = _getSourceCodeFromGenerators(generators);
+            List<IContainerSourceCodeBuilder> builders = _getSourceCodeBuilders();
+            List<string> sourceCodeFiles = _getSourceCodeFromBuilders(builders);
 
             var benchmarkClass = _getBenchmarkClass();
             sourceCodeFiles.Add(benchmarkClass);
@@ -21,24 +21,24 @@ namespace InterfacePerfTest
             return assembly;
         }
 
-        private static List<IContainerGenerator> _getGenerators()
+        private static List<IContainerSourceCodeBuilder> _getSourceCodeBuilders()
         {
             const long methodCount = 1;
-            List<IContainerGenerator> generators = new()
+            List<IContainerSourceCodeBuilder> builders = new()
             {
-                new ContainerGenerator(methodCount),
-                new ContainerWithInterfacesGenerator(methodCount)
+                new ContainerSourceCodeBuilder(methodCount),
+                new ContainerWithInterfacesSourceCodeBuilder(methodCount)
             };
-            return generators;
+            return builders;
         }
 
-        private static List<string> _getSourceCodeFromGenerators(List<IContainerGenerator> generators)
+        private static List<string> _getSourceCodeFromBuilders(List<IContainerSourceCodeBuilder> builders)
         {
             List<string> sourceCodeFiles = new();
-            foreach (var generator in generators)
+            foreach (var builder in builders)
             {
-                sourceCodeFiles.Add(generator.GetContainerSourceText());
-                sourceCodeFiles.Add(generator.GetCallingCodeSourceText());
+                sourceCodeFiles.Add(builder.GetContainerSourceText());
+                sourceCodeFiles.Add(builder.GetCallingCodeSourceText());
             }
 
             return sourceCodeFiles;

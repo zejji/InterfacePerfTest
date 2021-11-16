@@ -4,12 +4,16 @@ using System.Diagnostics;
 
 // See https://aka.ms/new-console-template for more information
 
-// Create in-memory assembly
+// Create an in-memory assembly.
 var assembly = AssemblyBuilder.GetBenchmarkAssembly();
-Type? type = assembly.GetType("MyBenchMarks.BenchmarkClass");
 
-// Run benchmarks
+// Get the class with the benchmark annotations.
+const string benchmarkClass = "MyBenchMarks.BenchmarkClass";
+Type? type = assembly.GetType(benchmarkClass);
+if (type == null) throw new InvalidOperationException($"\"{nameof(benchmarkClass)}\" could not be found.");
+
+// Run the benchmarks.
 var summary = BenchmarkRunner.Run(type);
 
-// Print results
+// Print results.
 Debug.WriteLine(summary);

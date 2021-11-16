@@ -1,10 +1,10 @@
-﻿namespace InterfacePerfTest.SourceCodeGenerators
+﻿namespace InterfacePerfTest.SourceCodeBuilders
 {
-    internal class ContainerWithInterfacesGenerator : IContainerGenerator
+    internal class ContainerWithInterfacesSourceCodeBuilder : IContainerSourceCodeBuilder
     {
         private long _methodCount;
 
-        public ContainerWithInterfacesGenerator(long methodCount)
+        public ContainerWithInterfacesSourceCodeBuilder(long methodCount)
         {
             _methodCount = methodCount;
         }
