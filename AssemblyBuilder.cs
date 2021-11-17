@@ -50,7 +50,7 @@ namespace InterfacePerfTest
 using BenchmarkDotNet.Attributes;
 using MyCode;
 
-namespace MyBenchMarks
+namespace MyBenchmarks
 {
     [InProcess]
     public class BenchmarkClass

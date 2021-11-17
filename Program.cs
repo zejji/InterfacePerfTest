@@ -8,7 +8,7 @@ using System.Diagnostics;
 var assembly = AssemblyBuilder.GetBenchmarkAssembly();
 
 // Get the class with the benchmark annotations.
-const string benchmarkClass = "MyBenchMarks.BenchmarkClass";
+const string benchmarkClass = "MyBenchmarks.BenchmarkClass";
 Type? type = assembly.GetType(benchmarkClass);
 if (type == null) throw new InvalidOperationException($"\"{nameof(benchmarkClass)}\" could not be found.");
 

@@ -14,6 +14,14 @@
             return @"
 using System;
 
+namespace StrongInject
+{
+    public interface IContainer<T> : IDisposable
+    {
+        TResult Run<TResult, TParam>(Func<T, TParam, TResult> func, TParam param);
+    }
+}
+
 namespace MyCode
 {
     public class HelloWorld2
