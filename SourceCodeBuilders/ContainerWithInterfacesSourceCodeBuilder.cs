@@ -23,6 +23,28 @@ namespace StrongInject
     {
         TResult Run<TResult, TParam>(Func<T, TParam, TResult> func, TParam param);
     }
+
+    public static class StrongInjectContainerExtensions
+    {
+	    public static TResult Run<T, TResult, TParam>(this IContainer<T> container, Func<T, TParam, TResult> func, TParam param)
+	    {
+		    return container.Run(func, param);
+	    }
+
+	    public static TResult Run<T, TResult>(this IContainer<T> container, Func<T, TResult> func)
+	    {
+		    return container.Run((T t, Func<T, TResult> func) => func(t), func);
+	    }
+
+	    public static void Run<T>(this IContainer<T> container, Action<T> action)
+	    {
+		    container.Run<object, Action<T>>((Func<T, Action<T>, object>)delegate (T t, Action<T> action)
+		    {
+			    action(t);
+			    return null;
+		    }, action);
+	    }
+    }
 }
 
 namespace MyCode
