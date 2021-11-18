@@ -1,4 +1,6 @@
-﻿namespace InterfacePerfTest.SourceCodeBuilders
+﻿using System.Text;
+
+namespace InterfacePerfTest.SourceCodeBuilders
 {
     internal class ContainerSourceCodeBuilder : IContainerSourceCodeBuilder
     {
@@ -11,7 +13,8 @@
 
         public string GetContainerSourceText()
         {
-            return @"
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append(@"
 using System;
 
 namespace MyCode
@@ -24,12 +27,14 @@ namespace MyCode
         }
     }
 }
-";
+");
+            return stringBuilder.ToString();
         }
 
         public string GetCallingCodeSourceText()
         {
-            return @"
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append(@"
 namespace MyCode
 {
     public static class Caller
@@ -41,7 +46,8 @@ namespace MyCode
         }
     }
 }
-";
+");
+            return stringBuilder.ToString();
         }
     }
 }

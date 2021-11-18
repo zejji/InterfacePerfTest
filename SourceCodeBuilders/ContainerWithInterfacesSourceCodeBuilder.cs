@@ -1,4 +1,6 @@
-﻿namespace InterfacePerfTest.SourceCodeBuilders
+﻿using System.Text;
+
+namespace InterfacePerfTest.SourceCodeBuilders
 {
     internal class ContainerWithInterfacesSourceCodeBuilder : IContainerSourceCodeBuilder
     {
@@ -11,7 +13,8 @@
 
         public string GetContainerSourceText()
         {
-            return @"
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append(@"
 using System;
 
 namespace StrongInject
@@ -26,18 +29,27 @@ namespace MyCode
 {
     public class HelloWorld2
     {
+");
+            for (long i = 0; i < _methodCount; i++) {
+                stringBuilder.Append(@"
         public void SayHello2() 
         {
             Console.WriteLine(""Hello from generated code2!"");
         }
+");
+            }
+
+            stringBuilder.Append(@"
     }
 }
-";
+");
+            return stringBuilder.ToString();
         }
 
         public string GetCallingCodeSourceText()
         {
-            return @"
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append(@"
 namespace MyCode
 {
     public static class Caller2
@@ -49,7 +61,8 @@ namespace MyCode
         }
     }
 }
-";
+");
+            return stringBuilder.ToString();
         }
     }
 }
