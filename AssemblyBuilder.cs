@@ -1,6 +1,10 @@
 ﻿using InterfacePerfTest.SourceCodeBuilders;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Emit;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace InterfacePerfTest
@@ -52,16 +56,15 @@ using MyCode;
 
 namespace MyBenchmarks
 {
-    [InProcess]
     public class BenchmarkClass
     {
-        [Benchmark]
+        [Benchmark(OperationsPerInvoke = 4)]
         public void CallSayHello() 
         {
             Caller.Run();
         }
 
-        [Benchmark]
+        [Benchmark(OperationsPerInvoke = 4)]
         public void CallSayHello2() 
         {
             Caller2.Run();
