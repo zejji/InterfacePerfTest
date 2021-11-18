@@ -76,7 +76,7 @@ namespace MyCode
 {
     public static class Caller2
     {
-        public static void Run() 
+        public static void BenchmarkMe() 
         {
             var testObject = new HelloWorld2();
             testObject.SayHello2();

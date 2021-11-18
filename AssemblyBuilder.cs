@@ -80,13 +80,13 @@ namespace MyBenchmarks
         [Benchmark(OperationsPerInvoke = 4)]
         public void CallSayHello() 
         {
-            Caller.Run();
+            Caller.BenchmarkMe();
         }
 
         [Benchmark(OperationsPerInvoke = 4)]
         public void CallSayHello2() 
         {
-            Caller2.Run();
+            Caller2.BenchmarkMe();
         }
     }
 }

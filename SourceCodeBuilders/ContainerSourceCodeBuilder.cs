@@ -39,7 +39,7 @@ namespace MyCode
 {
     public static class Caller
     {
-        public static void Run() 
+        public static void BenchmarkMe() 
         {
             var testObject = new HelloWorld();
             testObject.SayHello();
