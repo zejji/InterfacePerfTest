@@ -11,20 +11,23 @@ namespace InterfacePerfTest
 {
     internal static class AssemblyBuilder
     {
-        public static Assembly GetBenchmarkAssembly(long methodCount, bool printSource = false)
+        public static Assembly GetBenchmarkAssembly(int methodCount, bool printSource = false)
         {
-            const long maxPrintableMethods = 10;
+            const int maxPrintableMethods = 10;
             if (printSource && methodCount > maxPrintableMethods)
             {
                 throw new InvalidOperationException($"{nameof(printSource)} can only be set to true when {nameof(methodCount)} is less than {maxPrintableMethods}, as it is intended to help with understanding the benchmark only.");
             }
-            
+
+            var methodCallOrder = Enumerable.Range(1, methodCount).ToList();
+            methodCallOrder.Shuffle();
+
             List<string> sourceCodeFiles = new();
 
             var benchmarkClass = _getBenchmarkClass();
             sourceCodeFiles.Add(benchmarkClass);
 
-            List<IContainerSourceCodeBuilder> builders = _getSourceCodeBuilders(methodCount);
+            List<IContainerSourceCodeBuilder> builders = _getSourceCodeBuilders(methodCount, methodCallOrder);
             sourceCodeFiles.AddRange(_getSourceCodeFromBuilders(builders));
 
             if (printSource)
@@ -45,12 +48,12 @@ namespace InterfacePerfTest
             return assembly;
         }
 
-        private static List<IContainerSourceCodeBuilder> _getSourceCodeBuilders(long methodCount)
+        private static List<IContainerSourceCodeBuilder> _getSourceCodeBuilders(int methodCount, IEnumerable<int> methodCallOrder)
         {
             List<IContainerSourceCodeBuilder> builders = new()
             {
-                new ContainerSourceCodeBuilder(methodCount),
-                new ContainerWithInterfacesSourceCodeBuilder(methodCount)
+                new ContainerSourceCodeBuilder(methodCount, methodCallOrder),
+                new ContainerWithInterfacesSourceCodeBuilder(methodCount, methodCallOrder)
             };
             return builders;
         }

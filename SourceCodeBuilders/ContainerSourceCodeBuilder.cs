@@ -4,11 +4,13 @@ namespace InterfacePerfTest.SourceCodeBuilders
 {
     internal class ContainerSourceCodeBuilder : IContainerSourceCodeBuilder
     {
-        private long _methodCount;
+        private int _methodCount;
+        private IEnumerable<int> _methodCallOrder;
 
-        public ContainerSourceCodeBuilder(long methodCount)
+        public ContainerSourceCodeBuilder(int methodCount, IEnumerable<int> methodCallOrder)
         {
             _methodCount = methodCount;
+            _methodCallOrder = methodCallOrder;
         }
 
         public string GetContainerSourceText()

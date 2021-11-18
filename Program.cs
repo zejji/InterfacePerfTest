@@ -10,7 +10,7 @@ using System.Diagnostics;
 // See https://aka.ms/new-console-template for more information
 
 // Create an in-memory assembly.
-const long methodCount = 1;
+const int methodCount = 4;
 const bool printSource = true; // set to if you want to see the executed source code, but only with a low method count!
 var assembly = AssemblyBuilder.GetBenchmarkAssembly(methodCount, printSource);
 

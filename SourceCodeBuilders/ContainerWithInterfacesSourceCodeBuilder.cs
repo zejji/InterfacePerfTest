@@ -4,11 +4,13 @@ namespace InterfacePerfTest.SourceCodeBuilders
 {
     internal class ContainerWithInterfacesSourceCodeBuilder : IContainerSourceCodeBuilder
     {
-        private long _methodCount;
+        private int _methodCount;
+        private IEnumerable<int> _methodCallOrder;
 
-        public ContainerWithInterfacesSourceCodeBuilder(long methodCount)
+        public ContainerWithInterfacesSourceCodeBuilder(int methodCount, IEnumerable<int> methodCallOrder)
         {
             _methodCount = methodCount;
+            _methodCallOrder = methodCallOrder;
         }
 
         public string GetContainerSourceText()
@@ -49,15 +51,21 @@ namespace StrongInject
 
 namespace MyCode
 {
-    public class HelloWorld2
+    public class ContainerWithInterfaces
     {
-");
-            for (long i = 0; i < _methodCount; i++) {
-                stringBuilder.Append(@"
-        public void SayHello2() 
+        private long _total = 0;
+
+        public void PrintTotal() 
         {
-            Console.WriteLine(""Hello from generated code2!"");
+            Console.WriteLine($""The total for ContainerWithInterfaces is {_total}."");
         }
+");
+            for (int i = 0; i < _methodCount; i++) {
+                stringBuilder.Append(@$"
+        public void MyMethod{i}() 
+        {{
+            _total += {i};
+        }}
 ");
             }
 
@@ -78,8 +86,18 @@ namespace MyCode
     {
         public static void BenchmarkMe() 
         {
-            var testObject = new HelloWorld2();
-            testObject.SayHello2();
+            var testObject = new ContainerWithInterfaces();
+");
+
+            for (int i = 0; i < _methodCount; i++)
+            {
+                stringBuilder.Append(@$"
+            testObject.MyMethod{i}();
+");
+            }
+
+            stringBuilder.Append(@"
+            testObject.PrintTotal();
         }
     }
 }
