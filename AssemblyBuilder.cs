@@ -11,13 +11,33 @@ namespace InterfacePerfTest
 {
     internal static class AssemblyBuilder
     {
-        public static Assembly GetBenchmarkAssembly()
+        public static Assembly GetBenchmarkAssembly(long methodCount, bool printSource = false)
         {
-            List<IContainerSourceCodeBuilder> builders = _getSourceCodeBuilders();
-            List<string> sourceCodeFiles = _getSourceCodeFromBuilders(builders);
+            const long maxPrintableMethods = 10;
+            if (printSource && methodCount > maxPrintableMethods)
+            {
+                throw new InvalidOperationException($"{nameof(printSource)} can only be set to true when {nameof(methodCount)} is less than {maxPrintableMethods}, as it is intended to help with understanding the benchmark only.");
+            }
+            
+            List<string> sourceCodeFiles = new();
 
             var benchmarkClass = _getBenchmarkClass();
             sourceCodeFiles.Add(benchmarkClass);
+
+            List<IContainerSourceCodeBuilder> builders = _getSourceCodeBuilders(methodCount);
+            sourceCodeFiles.AddRange(_getSourceCodeFromBuilders(builders));
+
+            if (printSource)
+            {
+                Console.WriteLine("The following source code will be benchmarked:");
+                var asterisks = new string('*', 10);
+                int i = 1;
+                foreach (var file in sourceCodeFiles)
+                {
+                    Console.WriteLine(asterisks + $" File {i++} " + asterisks);
+                    Console.Write(file);
+                }
+            }
 
             var compilation = CompilationBuilder.CreateCompilation(sourceCodeFiles);
             var assembly = _getAssemblyFromCompilation(compilation);
@@ -25,9 +45,8 @@ namespace InterfacePerfTest
             return assembly;
         }
 
-        private static List<IContainerSourceCodeBuilder> _getSourceCodeBuilders()
+        private static List<IContainerSourceCodeBuilder> _getSourceCodeBuilders(long methodCount)
         {
-            const long methodCount = 1;
             List<IContainerSourceCodeBuilder> builders = new()
             {
                 new ContainerSourceCodeBuilder(methodCount),

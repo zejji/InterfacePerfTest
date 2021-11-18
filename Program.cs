@@ -10,14 +10,16 @@ using System.Diagnostics;
 // See https://aka.ms/new-console-template for more information
 
 // Create an in-memory assembly.
-var assembly = AssemblyBuilder.GetBenchmarkAssembly();
+const long methodCount = 1;
+const bool printSource = true; // set to if you want to see the executed source code, but only with a low method count!
+var assembly = AssemblyBuilder.GetBenchmarkAssembly(methodCount, printSource);
 
 // Get the class with the benchmark annotations.
 const string benchmarkClass = "MyBenchmarks.BenchmarkClass";
 Type? type = assembly.GetType(benchmarkClass);
 if (type == null) throw new InvalidOperationException($"\"{nameof(benchmarkClass)}\" could not be found.");
 
-// Run the benchmarks.
+// Configure BenchmarkDotNet.
 var benchmarkConfig = DefaultConfig.Instance
     .AddDiagnoser(MemoryDiagnoser.Default)
     .AddJob(Job.ShortRun
@@ -28,6 +30,7 @@ var benchmarkConfig = DefaultConfig.Instance
         .WithToolchain(InProcessEmitToolchain.Instance)
         .WithId("InProcess"));
 
+// Run the benchmarks.
 var summary = BenchmarkRunner.Run(type, benchmarkConfig);
 
 // Print results.
