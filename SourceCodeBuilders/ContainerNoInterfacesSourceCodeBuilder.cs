@@ -29,14 +29,19 @@ namespace MyCode
             for (int i = 0; i < _methodCount; i++)
             {
                 stringBuilder.Append(@$"
-    public class MyCommand1_{i}
+    public readonly ref struct MyCommand1_{i}
     {{
-        public int MyVal {{ get; set; }}
+        public int MyVal {{ get; init; }}
+	
+	    public MyCommand1_{i}(int myVal)
+	    {{
+            MyVal = myVal;
+	    }}
     }}
 
     public class MyCommandHandler1_{i}
     {{
-        public void Handle(MyCommand1_{i} command)
+        public void Handle(in MyCommand1_{i} command)
         {{
             MyStaticClass1.MyVal += (command.MyVal + {i});
         }}
@@ -90,7 +95,7 @@ namespace MyCode
             foreach (var j in _methodCallOrder)
             {
                 stringBuilder.Append(@$"
-            container.Run((MyCommandHandler1_{j} x) => x.Handle(new MyCommand1_{j}{{ MyVal = {i++} }}));
+            container.Run((MyCommandHandler1_{j} x) => x.Handle(new MyCommand1_{j}({i++})));
 ");
             }
 
