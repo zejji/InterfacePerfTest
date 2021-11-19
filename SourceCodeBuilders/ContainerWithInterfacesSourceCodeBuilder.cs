@@ -71,7 +71,7 @@ namespace MyCode
     {{
         public void Handle(MyCommand2_{i} command)
         {{
-            MyStaticClass2.MyVal += command.MyVal;
+            MyStaticClass2.MyVal += (command.MyVal + {i});
         }}
     }}
 ");

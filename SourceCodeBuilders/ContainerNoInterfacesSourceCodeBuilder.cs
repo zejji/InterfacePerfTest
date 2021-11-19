@@ -38,7 +38,7 @@ namespace MyCode
     {{
         public void Handle(MyCommand1_{i} command)
         {{
-            MyStaticClass1.MyVal += command.MyVal;
+            MyStaticClass1.MyVal += (command.MyVal + {i});
         }}
     }}
 ");

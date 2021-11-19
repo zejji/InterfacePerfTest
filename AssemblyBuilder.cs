@@ -13,6 +13,8 @@ namespace InterfacePerfTest
     {
         public static Assembly GetBenchmarkAssembly(int methodCount, bool printSource = false)
         {
+            Console.WriteLine("Generating source code for containers and calling code...");
+            
             const int maxPrintableMethods = 10;
             if (printSource && methodCount > maxPrintableMethods)
             {
@@ -33,8 +35,8 @@ namespace InterfacePerfTest
             if (printSource)
             {
                 Console.WriteLine("The following source code will be benchmarked:");
-                var asterisks = new string('*', 10);
-                int i = 1;
+                //var asterisks = new string('*', 10);
+                //int i = 1;
                 foreach (var file in sourceCodeFiles)
                 {
                     //Console.WriteLine(asterisks + $" File {i++} " + asterisks);
@@ -42,8 +44,12 @@ namespace InterfacePerfTest
                 }
             }
 
+            Console.WriteLine("Compiling source code and creating in-memory assembly...");
+
             var compilation = CompilationBuilder.CreateCompilation(sourceCodeFiles);
             var assembly = _getAssemblyFromCompilation(compilation);
+
+            Console.WriteLine("Compilation complete. Now we can start benchmarking.");
 
             return assembly;
         }
@@ -80,13 +86,15 @@ namespace MyBenchmarks
 
     public class BenchmarkClass
     {
-        [Benchmark(OperationsPerInvoke = 4)]
+        //[Benchmark(OperationsPerInvoke = 4)] // uncomment for shorter run during debugging
+        [Benchmark]
         public long NoInterfaceBenchmark() 
         {
             return NoInterfaceContainerCaller.BenchmarkMe();
         }
 
-        [Benchmark(OperationsPerInvoke = 4)]
+        //[Benchmark(OperationsPerInvoke = 4)] // uncomment for shorter run during debugging
+        [Benchmark]
         public long WithInterfacesBenchmark() 
         {
             return WithInterfacesContainerCaller.BenchmarkMe();
