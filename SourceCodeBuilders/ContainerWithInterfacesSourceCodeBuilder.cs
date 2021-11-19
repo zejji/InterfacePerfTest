@@ -17,10 +17,10 @@ namespace InterfacePerfTest.SourceCodeBuilders
         {
             var stringBuilder = new StringBuilder();
             stringBuilder.Append(@"
-using System;
-
 namespace StrongInject
 {
+    using System;
+
     public interface IContainer<T> : IDisposable
     {
         TResult Run<TResult, TParam>(Func<T, TParam, TResult> func, TParam param);
@@ -51,21 +51,61 @@ namespace StrongInject
 
 namespace MyCode
 {
-    public class ContainerWithInterfaces
-    {
-        private long _total = 0;
+    using StrongInject;
+    using System;
 
-        public void PrintTotal() 
-        {
-            Console.WriteLine($""The total for ContainerWithInterfaces is {_total}."");
-        }
+    public static class MyStaticClass
+    {
+        public static int MyVal { get; set; } = 0;
+    }
 ");
-            for (int i = 0; i < _methodCount; i++) {
+            for (int i = 0; i < _methodCount; i++)
+            {
                 stringBuilder.Append(@$"
-        public void MyMethod{i}() 
+    public class MyCommand{i}
+    {{
+        public int MyVal {{ get; set; }}
+    }}
+
+    public class MyCommandHandler{i}
+    {{
+        public void Handle(MyCommand{i} command)
         {{
-            _total += {i};
+            MyStaticClass.MyVal += command.MyVal;
         }}
+    }}
+");
+            }
+
+            stringBuilder.Append(@"
+    public class ContainerWithInterfaces :
+");
+
+            for (int j = 0; j < (_methodCount - 1); j++)
+            {
+                stringBuilder.Append(@$"
+        IContainer<MyCommandHandler{j}>,
+");
+            }
+            stringBuilder.Append(@$"
+        IContainer<MyCommandHandler{_methodCount - 1}>
+    {{
+        public void Dispose()
+		{{
+        }}
+");
+
+            for (int k = 0; k < _methodCount; k++) {
+                stringBuilder.Append(@$"
+        TResult IContainer<MyCommandHandler{k}>.Run<TResult, TParam>(Func<MyCommandHandler{k}, TParam, TResult> func, TParam param)
+	    {{
+		    MyCommandHandler{k} dependency = new MyCommandHandler{k}();
+
+		    TResult result;
+		    result = func(dependency, param);
+
+		    return result;
+	    }}
 ");
             }
 
@@ -82,22 +122,27 @@ namespace MyCode
             stringBuilder.Append(@"
 namespace MyCode
 {
+    using StrongInject;
+    //using System;
+
     public static class Caller2
     {
-        public static void BenchmarkMe() 
+        public static long BenchmarkMe() 
         {
-            var testObject = new ContainerWithInterfaces();
+            var container = new ContainerWithInterfaces();
 ");
 
-            for (int i = 0; i < _methodCount; i++)
+            var i = 1;
+            foreach (var j in _methodCallOrder)
             {
                 stringBuilder.Append(@$"
-            testObject.MyMethod{i}();
+            container.Run<MyCommandHandler{j}>(x => x.Handle(new MyCommand{j}{{ MyVal = {i++} }}));
 ");
             }
 
             stringBuilder.Append(@"
-            testObject.PrintTotal();
+            //Console.WriteLine($""MyStaticClass.MyVal is {MyStaticClass.MyVal}."");
+            return MyStaticClass.MyVal;
         }
     }
 }

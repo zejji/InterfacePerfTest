@@ -19,7 +19,7 @@ namespace InterfacePerfTest
                 throw new InvalidOperationException($"{nameof(printSource)} can only be set to true when {nameof(methodCount)} is less than {maxPrintableMethods}, as it is intended to help with understanding the benchmark only.");
             }
 
-            var methodCallOrder = Enumerable.Range(1, methodCount).ToList();
+            var methodCallOrder = Enumerable.Range(0, methodCount).ToList();
             methodCallOrder.Shuffle();
 
             List<string> sourceCodeFiles = new();
@@ -81,15 +81,15 @@ namespace MyBenchmarks
     public class BenchmarkClass
     {
         [Benchmark(OperationsPerInvoke = 4)]
-        public void CallSayHello() 
+        public long CallSayHello() 
         {
-            Caller.BenchmarkMe();
+            return Caller.BenchmarkMe();
         }
 
         [Benchmark(OperationsPerInvoke = 4)]
-        public void CallSayHello2() 
+        public long CallSayHello2() 
         {
-            Caller2.BenchmarkMe();
+            return Caller2.BenchmarkMe();
         }
     }
 }

@@ -41,10 +41,11 @@ namespace MyCode
 {
     public static class Caller
     {
-        public static void BenchmarkMe() 
+        public static long BenchmarkMe() 
         {
             var testObject = new HelloWorld();
             testObject.SayHello();
+            return 0L;
         }
     }
 }
