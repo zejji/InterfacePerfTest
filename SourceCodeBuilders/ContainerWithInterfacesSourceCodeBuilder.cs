@@ -54,7 +54,7 @@ namespace MyCode
     using StrongInject;
     using System;
 
-    public static class MyStaticClass
+    public static class MyStaticClass2
     {
         public static int MyVal { get; set; } = 0;
     }
@@ -62,16 +62,16 @@ namespace MyCode
             for (int i = 0; i < _methodCount; i++)
             {
                 stringBuilder.Append(@$"
-    public class MyCommand{i}
+    public class MyCommand2_{i}
     {{
         public int MyVal {{ get; set; }}
     }}
 
-    public class MyCommandHandler{i}
+    public class MyCommandHandler2_{i}
     {{
-        public void Handle(MyCommand{i} command)
+        public void Handle(MyCommand2_{i} command)
         {{
-            MyStaticClass.MyVal += command.MyVal;
+            MyStaticClass2.MyVal += command.MyVal;
         }}
     }}
 ");
@@ -84,11 +84,11 @@ namespace MyCode
             for (int j = 0; j < (_methodCount - 1); j++)
             {
                 stringBuilder.Append(@$"
-        IContainer<MyCommandHandler{j}>,
+        IContainer<MyCommandHandler2_{j}>,
 ");
             }
             stringBuilder.Append(@$"
-        IContainer<MyCommandHandler{_methodCount - 1}>
+        IContainer<MyCommandHandler2_{_methodCount - 1}>
     {{
         public void Dispose()
 		{{
@@ -97,9 +97,9 @@ namespace MyCode
 
             for (int k = 0; k < _methodCount; k++) {
                 stringBuilder.Append(@$"
-        TResult IContainer<MyCommandHandler{k}>.Run<TResult, TParam>(Func<MyCommandHandler{k}, TParam, TResult> func, TParam param)
+        TResult IContainer<MyCommandHandler2_{k}>.Run<TResult, TParam>(Func<MyCommandHandler2_{k}, TParam, TResult> func, TParam param)
 	    {{
-		    MyCommandHandler{k} dependency = new MyCommandHandler{k}();
+		    MyCommandHandler2_{k} dependency = new MyCommandHandler2_{k}();
 
 		    TResult result;
 		    result = func(dependency, param);
@@ -125,7 +125,7 @@ namespace MyCode
     using StrongInject;
     //using System;
 
-    public static class Caller2
+    public static class WithInterfacesContainerCaller
     {
         public static long BenchmarkMe() 
         {
@@ -136,13 +136,13 @@ namespace MyCode
             foreach (var j in _methodCallOrder)
             {
                 stringBuilder.Append(@$"
-            container.Run<MyCommandHandler{j}>(x => x.Handle(new MyCommand{j}{{ MyVal = {i++} }}));
+            container.Run<MyCommandHandler2_{j}>(x => x.Handle(new MyCommand2_{j}{{ MyVal = {i++} }}));
 ");
             }
 
             stringBuilder.Append(@"
-            //Console.WriteLine($""MyStaticClass.MyVal is {MyStaticClass.MyVal}."");
-            return MyStaticClass.MyVal;
+            //Console.WriteLine($""MyStaticClass2.MyVal is {MyStaticClass2.MyVal}."");
+            return MyStaticClass2.MyVal;
         }
     }
 }

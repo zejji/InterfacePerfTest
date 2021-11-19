@@ -37,7 +37,7 @@ namespace InterfacePerfTest
                 int i = 1;
                 foreach (var file in sourceCodeFiles)
                 {
-                    Console.WriteLine(asterisks + $" File {i++} " + asterisks);
+                    //Console.WriteLine(asterisks + $" File {i++} " + asterisks);
                     Console.Write(file);
                 }
             }
@@ -52,7 +52,7 @@ namespace InterfacePerfTest
         {
             List<IContainerSourceCodeBuilder> builders = new()
             {
-                new ContainerSourceCodeBuilder(methodCount, methodCallOrder),
+                new ContainerNoInterfacesSourceCodeBuilder(methodCount, methodCallOrder),
                 new ContainerWithInterfacesSourceCodeBuilder(methodCount, methodCallOrder)
             };
             return builders;
@@ -73,23 +73,23 @@ namespace InterfacePerfTest
         private static string _getBenchmarkClass()
         {
             return @"
-using BenchmarkDotNet.Attributes;
-using MyCode;
-
 namespace MyBenchmarks
 {
+    using BenchmarkDotNet.Attributes;
+    using MyCode;    
+
     public class BenchmarkClass
     {
         [Benchmark(OperationsPerInvoke = 4)]
-        public long CallSayHello() 
+        public long NoInterfaceBenchmark() 
         {
-            return Caller.BenchmarkMe();
+            return NoInterfaceContainerCaller.BenchmarkMe();
         }
 
         [Benchmark(OperationsPerInvoke = 4)]
-        public long CallSayHello2() 
+        public long WithInterfacesBenchmark() 
         {
-            return Caller2.BenchmarkMe();
+            return WithInterfacesContainerCaller.BenchmarkMe();
         }
     }
 }
